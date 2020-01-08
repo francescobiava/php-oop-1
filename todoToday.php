@@ -2,24 +2,47 @@
 
 class Configurazione {
 
-  // variabili
+  public $id;
+  public $title;
+  public $description;
 
-  function __construct(/* parametri*/) {
-
-    // valorizzazione variabili tramite parametri
+  function __construct($id, $title, $description) {
+    $this->id = $id;
+    $this->title = $title;
+    $this->description = $description;
   }
 
-  //funzioni utili
-
   public function __toString() {
-
-    return /* rappresentazione testuale dell'oggetto */;
+    return 'Configurazione ' . $this->id . ':<br>'
+            . $this->title . '<br>'
+            . $this->description .'<br><br>';
   }
 }
 
 // connessione al DB
+$servername = 'localhost';
+$username = 'root';
+$pws = 'root';
+$db = 'HotelDB';
 
-// download di tutte le configurazioni
+$conn = new mysqli($servername, $username, $pws, $db);
+
+if ($conn -> connect_errno) {
+  echo json_encode(-1);
+  return;
+}
+
+$sql = "
+  SELECT *
+  FROM configurazioni
+";
+
+$res = $conn -> query($sql);
+
+if ($res -> num_rows < 1) {
+  echo json_encode(-2);
+  return;
+}
 
 $confs = [];
 while($conf = $res -> fetch_assoc()) {
@@ -29,7 +52,9 @@ while($conf = $res -> fetch_assoc()) {
                                 $conf['description']);
 }
 
-foreach ($conf as $confs) {
+$conn -> close();
+
+foreach ($confs as $conf) {
 
   echo $conf;
 }
